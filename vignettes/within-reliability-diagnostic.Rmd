@@ -12,8 +12,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 run <- requireNamespace("fixest", quietly = TRUE)
 ```
 
-`ferobust` implements the within-reliability diagnostic from Rosenberg
-(forthcoming). For a continuous, slow-moving regressor in a panel regression with
+`ferobust` implements a within-reliability diagnostic. For a continuous, slow-moving regressor in a panel regression with
 unit and year fixed effects, it asks how much of the shrinkage from pooled OLS to
 fixed effects is measurement-error attenuation rather than confounding removed,
 and reports an identified set rather than a single coefficient.
@@ -82,6 +81,6 @@ the shrinkage at all.
 
 ## See also
 
-The paper (Rosenberg, forthcoming) develops the corrected formula, the routing
+The working paper develops the corrected formula, the routing
 rule, and the partial-identification bounds, and applies them to a worked
 bureaucracy-and-growth case plus a broader audit of canonical panel studies.

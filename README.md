@@ -7,7 +7,7 @@ For a continuous, slow-moving regressor measured with error, fixed effects can
 of the signal and identify the coefficient from low-reliability within-unit
 movement. A coefficient that shrinks under fixed effects is therefore ambiguous.
 It may be confounding removed, or it may be attenuation. `ferobust` implements the
-diagnostic and reporting workflow from Rosenberg (forthcoming) that tells these
+diagnostic and reporting workflow from the working paper that tells these
 apart, using quantities the analyst already has.
 
 It computes the corrected within-reliability, partial-identification bounds with
@@ -62,8 +62,8 @@ vignette("within-reliability-diagnostic", package = "ferobust")
 
 ## Reference
 
-Rosenberg, A. (forthcoming). "Reliable Panel Regression: A Default Workflow for
-Slow-Moving, Mismeasured Variables."
+Rosenberg, A. "Reliable Panel Regression: A Default Workflow for
+Slow-Moving, Mismeasured Variables." Working paper.
 
 ## License
 

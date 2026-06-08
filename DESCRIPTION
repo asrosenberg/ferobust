@@ -8,7 +8,7 @@ Description: Computes the corrected within-reliability, partial identification
     bounds, Imbens-Manski confidence intervals, the breakdown reliability, and the
     autocorrelation frontier with its certification rule for fixed-effects
     regressions with slow-moving, mismeasured regressors. Implements the reporting
-    workflow from Rosenberg (2026) "Reliable Panel Regression: A Default Workflow
+    workflow from the working paper "Reliable Panel Regression: A Default Workflow
     for Slow-Moving, Mismeasured Variables."
 License: MIT + file LICENSE
 URL: https://github.com/asrosenberg/ferobust

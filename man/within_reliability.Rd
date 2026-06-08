@@ -19,6 +19,6 @@ Within-reliability, floored at 1e-3 when icc_hat exceeds lambda
 Under classical ME, the empirical ICC of the observed regressor satisfies
 \code{icc_hat = ICC_true * lambda}, so substituting into the Griliches-Hausman
 expression yields \code{lambda_w = (lambda - icc_hat) / (1 - icc_hat)}.
-This is the form Rosenberg (2026) derives and recommends; it uses
+This is the form the working paper derives and recommends; it uses
 only the assumed reliability and the empirical ICC of the observed data.
 }
