@@ -20,6 +20,10 @@ a verdict: rescue, certified, complement, sign flip, or not identified.
 ```r
 # install.packages("remotes")
 remotes::install_github("asrosenberg/ferobust")
+
+# to include the vignette, build it on install (needs pandoc, which
+# RStudio and Quarto provide):
+remotes::install_github("asrosenberg/ferobust", build_vignettes = TRUE)
 ```
 
 ## Quick start
