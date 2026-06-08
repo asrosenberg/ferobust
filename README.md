@@ -63,7 +63,7 @@ vignette("within-reliability-diagnostic", package = "ferobust")
 ## Reference
 
 Rosenberg, A. "Reliable Panel Regression: A Default Workflow for
-Slow-Moving, Mismeasured Variables." Working paper.
+Slow-Moving, Mismeasured Variables." Unpublished manuscript.
 
 ## License
 
