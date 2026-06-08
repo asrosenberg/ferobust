@@ -1,0 +1,29 @@
+Package: ferobust
+Title: Measurement Error Diagnostics for Fixed Effects Regression
+Version: 0.1.0
+Authors@R: person("Andrew", "Rosenberg", email = "andrewrosenberg@ufl.edu", role = c("aut", "cre"))
+Author: Andrew Rosenberg
+Maintainer: Andrew Rosenberg <andrewrosenberg@ufl.edu>
+Description: Computes the corrected within-reliability, partial identification
+    bounds, Imbens-Manski confidence intervals, the breakdown reliability, and the
+    autocorrelation frontier with its certification rule for fixed-effects
+    regressions with slow-moving, mismeasured regressors. Implements the reporting
+    workflow from Rosenberg (2026) "Reliable Panel Regression: A Default Workflow
+    for Slow-Moving, Mismeasured Variables."
+License: MIT + file LICENSE
+URL: https://github.com/asrosenberg/ferobust
+BugReports: https://github.com/asrosenberg/ferobust/issues
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    stats
+Suggests:
+    fixest,
+    lme4,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

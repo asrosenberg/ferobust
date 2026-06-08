@@ -1,0 +1,87 @@
+---
+title: "The Within-Reliability Diagnostic"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The Within-Reliability Diagnostic}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+run <- requireNamespace("fixest", quietly = TRUE)
+```
+
+`ferobust` implements the within-reliability diagnostic from Rosenberg
+(forthcoming). For a continuous, slow-moving regressor in a panel regression with
+unit and year fixed effects, it asks how much of the shrinkage from pooled OLS to
+fixed effects is measurement-error attenuation rather than confounding removed,
+and reports an identified set rather than a single coefficient.
+
+## A worked example
+
+The package ships a small synthetic panel, `panel_demo`, with a slow-moving,
+mismeasured regressor `x` and its measurement-model posterior standard deviation
+`x_sd`.
+
+```{r, eval = run}
+library(ferobust)
+data(panel_demo)
+head(panel_demo)
+```
+
+The whole workflow is one call. With `reliability = "auto"`, the package finds the
+posterior column (`x_sd`, or a `_codelow`/`_codehigh` credible interval) and
+computes the reliability itself, so the analyst supplies no reliability number:
+
+```{r, eval = run}
+audit(y ~ x | unit + year, data = panel_demo,
+      key_var = "x", reliability = "auto", re = FALSE)
+```
+
+The output reports the empirical ICC of the regressor, pooled OLS and fixed
+effects, the corrected within-reliability, the identified set, the Imbens-Manski
+confidence interval, and a verdict. Here the bounds exclude zero, so the case is a
+**rescue**: the fixed-effects estimate is attenuated, and the corrected bounds
+recover an effect that the bare coefficient understated.
+
+## The corrected formula
+
+The diagnostic rests on the corrected within-reliability,
+
+$$\lambda_w = \frac{\lambda - \widehat{\mathrm{ICC}}}{1 - \widehat{\mathrm{ICC}}},$$
+
+where $\lambda$ is the overall reliability of the regressor and
+$\widehat{\mathrm{ICC}}$ is its empirical intraclass correlation in the sample.
+This is the Griliches-Hausman within-reliability rewritten in terms of the
+observable ICC: under classical measurement error
+$\widehat{\mathrm{ICC}} = \mathrm{ICC}^* \cdot \lambda$, and substituting gives the
+corrected form.
+
+## Reliability without a measurement model
+
+When no posterior or external reliability is available, the autocorrelation
+frontier bounds $\lambda_w$ from the regressor's own persistence under an assumed
+ceiling on how persistent the measurement error could be:
+
+```{r, eval = run}
+frontier_audit(y ~ x | unit + year, data = panel_demo,
+               key_var = "x", psi_max = c(0, 0.5, 0.7))
+```
+
+## The routing rule
+
+A sign test routes each application. When pooled OLS and fixed effects share a
+sign and fixed effects is smaller, the result is the identified set across the
+defensible reliability range: a rescue if it excludes zero, not identified if it
+does not. When fixed effects is larger in magnitude, the case is a complement and
+the bounds become a one-sided floor. When the signs disagree, the bounds do not
+apply and fixed effects is reported as a within-unit estimate. When reliability
+cannot be defended, the frontier asks whether measurement error could account for
+the shrinkage at all.
+
+## See also
+
+The paper (Rosenberg, forthcoming) develops the corrected formula, the routing
+rule, and the partial-identification bounds, and applies them to a worked
+bureaucracy-and-growth case plus a broader audit of canonical panel studies.

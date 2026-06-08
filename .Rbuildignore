@@ -1,0 +1,5 @@
+^data-raw$
+^LICENSE\.md$
+^\.git$
+^\.gitignore$
+^\.Rproj\.user$
