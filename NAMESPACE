@@ -1,6 +1,7 @@
 export(ferobust)
 export(ferobust_lm)
 export(audit)
+export(breakdown_gamma)
 export(estimate_lambda)
 export(resolve_lambda)
 export(lambda_from_posterior_sd)

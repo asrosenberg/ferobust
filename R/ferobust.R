@@ -159,6 +159,15 @@ print.ferobust <- function(x, ...) {
               round((1 - x$alpha) * 100), x$im_ci["lower"], x$im_ci["upper"]))
   cat(sprintf("Excludes zero:       %s\n",
               ifelse((x$im_ci["lower"] > 0) | (x$im_ci["upper"] < 0), "yes", "no")))
+  if (!is.null(x$breakdown_gamma) && !all(is.na(x$breakdown_gamma))) {
+    g <- range(x$breakdown_gamma, na.rm = TRUE)
+    if (g[1] > 1) {
+      cat("Differential-ME breakdown |gamma|: > 1 (robust to any admissible error-outcome correlation)\n")
+    } else {
+      cat(sprintf("Differential-ME breakdown |gamma|: [%.3f, %.3f]\n", g[1], g[2]))
+      cat("  (error-outcome correlation that pushes the lower bound to zero)\n")
+    }
+  }
 
   if (!is.null(x$fe_fd)) {
     cat(paste(rep("-", 50), collapse = ""), "\n")
@@ -520,6 +529,31 @@ audit <- function(formula, data,
     "not identified"
   }
 
+  # ---- Differential-ME breakdown gamma (confounding margin) -----------------
+  # For a rescue, zero-exclusion rests on the lower (pooled) bound. A single
+  # differential-ME correlation gamma between the regressor's measurement error
+  # and the outcome biases the pooled estimate by gamma * sqrt(1 - lambda) *
+  # sd_e / sd_x, with sd_x the SD of the key regressor at the pooled (time-
+  # absorbed) level and sd_e the pooled residual SD. The lower bound reaches zero
+  # at |gamma| = |b_P| * sd_x / (sqrt(1 - lambda) * sd_e), reported across the
+  # reliability range. This is the confounding-margin sensitivity, defined only
+  # for the rescue verdict; values above 1 mean no admissible correlation can
+  # overturn it.
+  diag$breakdown_gamma <- NA_real_
+  if (identical(diag$verdict, "rescue")) {
+    px_form <- if (!is.na(time_var) && time_var %in% names(data)) {
+      stats::as.formula(paste0(key_var, " ~ 1 | ", time_var))
+    } else {
+      stats::as.formula(paste0(key_var, " ~ 1"))
+    }
+    sd_x_P <- tryCatch(stats::sd(stats::resid(fixest::feols(px_form, data = data))),
+                       error = function(e) NA_real_)
+    sd_e_P <- stats::sd(stats::resid(m_pool))
+    if (!is.na(sd_x_P) && sd_x_P > 0 && !is.na(sd_e_P) && sd_e_P > 0) {
+      diag$breakdown_gamma <- abs(b_P) * sd_x_P / (sqrt(1 - reliability) * sd_e_P)
+    }
+  }
+
   if (length(diag$scope_warnings) > 0) {
     for (w in diag$scope_warnings) warning(w, call. = FALSE)
   }
@@ -527,6 +561,32 @@ audit <- function(formula, data,
   diag
 }
 
+
+#' Differential-measurement-error breakdown gamma for a rescue
+#'
+#' For a \dQuote{rescue} verdict, zero-exclusion rests on the lower (pooled)
+#' bound of the identified set. This returns the breakdown \eqn{|\gamma|}, the
+#' correlation between the regressor's measurement error and the outcome that
+#' would push that bound to zero, evaluated across the reliability range. It is
+#' the confounding-margin sensitivity reported in the paper: a thin wrapper
+#' around \code{\link{audit}} (random effects skipped for speed) that returns
+#' \code{NA} for any verdict other than a rescue.
+#'
+#' @inheritParams audit
+#' @return A named numeric vector of \eqn{|\gamma|} thresholds, one per point in
+#'   \code{reliability}, or \code{NA} when the verdict is not a rescue.
+#' @examples
+#' if (requireNamespace("fixest", quietly = TRUE)) {
+#'   breakdown_gamma(y ~ x | unit + year, data = panel_demo,
+#'                   key_var = "x", reliability = "auto")
+#' }
+#' @export
+breakdown_gamma <- function(formula, data,
+                            reliability = c(low = 0.85, mid = 0.90, high = 0.95),
+                            key_var = NULL) {
+  audit(formula, data, reliability = reliability, key_var = key_var,
+        re = FALSE)$breakdown_gamma
+}
 
 #' @rdname audit
 #' @export

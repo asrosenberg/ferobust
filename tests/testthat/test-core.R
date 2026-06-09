@@ -37,3 +37,19 @@ test_that("within_reliability_frontier floor is in [0,1) and falls with psi_max"
   expect_true(all(fr$lambda_w_lower >= 0 & fr$lambda_w_lower < 1))
   expect_gte(fr$lambda_w_lower[1], fr$lambda_w_lower[3])      # weaker assumption -> tighter bound
 })
+
+test_that("breakdown_gamma reproduces the closed form on a rescue and rises with reliability", {
+  skip_if_not_installed("fixest")
+  g <- breakdown_gamma(y ~ x | unit + year, data = panel_demo, key_var = "x",
+                       reliability = c(0.85, 0.90, 0.95))
+  expect_true(all(is.finite(g) & g > 0))
+  expect_lt(g[1], g[3])                       # higher reliability is harder to overturn
+
+  # closed form: |b_P| * sd_x(time-absorbed) / (sqrt(1 - lambda) * sd_e_pooled)
+  mp  <- fixest::feols(y ~ x + factor(year), data = panel_demo, vcov = ~unit)
+  sdx <- stats::sd(stats::resid(fixest::feols(x ~ 1 | year, data = panel_demo)))
+  expect_equal(unname(g[2]),
+               unname(abs(stats::coef(mp)["x"]) * sdx /
+                      (sqrt(1 - 0.90) * stats::sd(stats::resid(mp)))),
+               tolerance = 1e-6)
+})

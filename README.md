@@ -44,6 +44,12 @@ Imbens-Manski interval, and a verdict. On `panel_demo` the bounds exclude zero, 
 the case is a *rescue*: the fixed-effects estimate is attenuated, and the
 corrected bounds recover an effect the bare coefficient understated.
 
+For a rescue, the audit also reports a differential-measurement-error
+sensitivity: the breakdown *gamma*, the correlation between the regressor's
+measurement error and the outcome that would push the lower bound back to zero.
+`breakdown_gamma()` returns it directly across the reliability range (a value
+above 1 means no admissible correlation can overturn the result).
+
 When no reliability is available, the autocorrelation frontier bounds it from the
 regressor's own persistence:
 
