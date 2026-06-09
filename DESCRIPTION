@@ -1,9 +1,7 @@
 Package: ferobust
 Title: Measurement Error Diagnostics for Fixed Effects Regression
 Version: 0.1.0
-Authors@R: person("Andrew", "Rosenberg", email = "andrewrosenberg@ufl.edu", role = c("aut", "cre"))
-Author: Andrew Rosenberg
-Maintainer: Andrew Rosenberg <andrewrosenberg@ufl.edu>
+Authors@R: person("Andrew S.", "Rosenberg", email = "andrewrosenberg@ufl.edu", role = c("aut", "cre"))
 Description: Computes the corrected within-reliability, partial identification
     bounds, Imbens-Manski confidence intervals, the breakdown reliability, and the
     autocorrelation frontier with its certification rule for fixed-effects
