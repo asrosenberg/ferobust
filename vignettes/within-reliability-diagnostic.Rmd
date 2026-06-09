@@ -42,7 +42,8 @@ The output reports the empirical ICC of the regressor, pooled OLS and fixed
 effects, the corrected within-reliability, the identified set, the Imbens-Manski
 confidence interval, and a verdict. Here the bounds exclude zero, so the case is a
 **rescue**: the fixed-effects estimate is attenuated, and the corrected bounds
-recover an effect that the bare coefficient understated.
+recover an effect that the bare coefficient understated. For a rescue the printout
+closes with a differential-measurement-error breakdown, explained below.
 
 ## The corrected formula
 
@@ -56,6 +57,25 @@ This is the Griliches-Hausman within-reliability rewritten in terms of the
 observable ICC: under classical measurement error
 $\widehat{\mathrm{ICC}} = \mathrm{ICC}^* \cdot \lambda$, and substituting gives the
 corrected form.
+
+## Differential measurement error
+
+The bounds assume classical measurement error, meaning the regressor's error is
+uncorrelated with the outcome. When that assumption fails, a rescue can be
+overturned. For a rescue, `breakdown_gamma()` reports how much non-classical error
+that would take: the correlation between the regressor's measurement error and the
+outcome that drives the lower bound back to zero, evaluated across the reliability
+range.
+
+```{r, eval = run}
+round(breakdown_gamma(y ~ x | unit + year, data = panel_demo,
+                      key_var = "x", reliability = "auto"), 2)
+```
+
+A small threshold means the rescue is fragile to non-classical error. Because the
+quantity is a correlation, a value above 1 means no admissible error structure can
+overturn the result, as here. The same figure is printed by `audit()` for any
+rescue.
 
 ## Reliability without a measurement model
 
